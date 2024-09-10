@@ -1,0 +1,17 @@
+{
+  "name": "messages-consumer",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js"
+    }
+  },
+  "scripts": {
+    "start": "node --env-file=.env src/index.js",
+    "start:dev": "node --env-file=.env --watch src/index.js"
+  },
+  "author": "Danil Rodionow",
+  "license": "ISC"
+}

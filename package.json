@@ -1,0 +1,25 @@
+{
+  "name": "email-sender",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start:client:dev": "npm run start:dev --workspace=client",
+    "start:api:dev": "npm run start:dev --workspace=api",
+    "start:messages-consumer:dev": "npm run start:dev --workspace=packages/messages-consumer",
+    "start:rabbit": "docker-compose up -d"
+  },
+  "author": "Danil Rodionow",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "0.10.4"
+  },
+  "workspaces": [
+    "packages/amqp-client",
+    "client",
+    "api",
+    "packages/mail-sender",
+    "packages/messages-consumer",
+    "packages/shared"
+  ]
+}

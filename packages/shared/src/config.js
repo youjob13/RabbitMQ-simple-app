@@ -1,0 +1,6 @@
+const MAIL_MESSAGES_QUEUE = "mail-messages";
+
+export const QUEUES = {
+  MAIL_MESSAGES: MAIL_MESSAGES_QUEUE,
+  ALL: [MAIL_MESSAGES_QUEUE],
+};

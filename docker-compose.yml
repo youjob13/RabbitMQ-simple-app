@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  rabbit-server:
+    build: .
+    hostname: rmq
+    ports:
+      - "8080:15672" # Management console
+      - "5672:5672" # RabbitMQ server
+    container_name: rabbit-server

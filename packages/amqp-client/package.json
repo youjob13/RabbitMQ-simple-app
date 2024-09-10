@@ -1,0 +1,14 @@
+{
+  "name": "amqp-client",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./amqp.js",
+      "require": "./amqp.js"
+    }
+  },
+  "author": "Danil Rodionow",
+  "license": "ISC"
+}

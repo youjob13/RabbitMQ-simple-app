@@ -1,0 +1,13 @@
+{
+  "name": "mail-sender",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js"
+    }
+  },
+  "author": "Danil Rodionow",
+  "license": "ISC"
+}

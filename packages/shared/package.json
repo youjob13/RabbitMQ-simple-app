@@ -1,0 +1,16 @@
+{
+  "name": "shared",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "shared": "1.0.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "require": "./src/index.js"
+    }
+  },
+  "author": "Danil Rodionow",
+  "license": "ISC"
+}
