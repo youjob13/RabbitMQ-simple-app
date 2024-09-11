@@ -1,22 +1,20 @@
-import { AMQPClient } from "amqp-client";
-import { QUEUES } from "shared";
+import Fastify from "fastify";
+import setupPlugins from "./setup.js";
 
-import { fastify } from "./setup-fastify.js";
-import initRoutes from "./routes.js";
+const fastify = Fastify({
+  logger: true,
+});
 
 class App {
   #appPort;
 
-  constructor({ amqpHost, appPort }) {
+  constructor({ appPort }) {
     this.#appPort = appPort;
-
-    const amqpClient = new AMQPClient({ host: amqpHost });
-    amqpClient.initQueues(QUEUES.ALL);
-
-    initRoutes({ amqpClient });
   }
 
   async run() {
+    await setupPlugins(fastify);
+
     try {
       await fastify.listen({ port: this.#appPort });
     } catch (err) {
@@ -28,6 +26,5 @@ class App {
 
 const app = new App({
   appPort: process.env.PORT || 3000,
-  amqpHost: process.env.AMQP_HOST,
 });
 app.run();
