@@ -25,7 +25,7 @@ export default ({ amqpClient }) => {
       },
     },
     handler: async (request) => {
-      amqpClient.publish(QUEUES.MAIL_MESSAGES, request.body);
+      amqpClient.publish(QUEUES.MAIL_MESSAGES.name, request.body);
       return "Your message has been sent.";
     },
   });

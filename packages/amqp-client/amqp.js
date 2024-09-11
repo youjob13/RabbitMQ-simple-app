@@ -2,6 +2,8 @@ import amqplib from "amqplib";
 import EventEmitter from "events";
 
 export class AMQPClient extends EventEmitter {
+  static DLQ_EXCHANGE = "dlx.exchange";
+
   connection;
   channelsByQueueNameMap = new Map();
   #host;
@@ -23,18 +25,40 @@ export class AMQPClient extends EventEmitter {
   async initQueues(queues) {
     await this.connect();
 
-    const promises = queues.map(async (queue) => {
-      if (this.channelsByQueueNameMap.has(queue)) {
-        throw new Error(`Queue with ${queue} name already exists!`);
+    const channel = await this.connection.createChannel();
+    await channel.assertExchange(AMQPClient.DLQ_EXCHANGE, "direct", {
+      durable: true,
+    });
+
+    const promises = queues.map(async ({ name, routingKey }) => {
+      if (this.channelsByQueueNameMap.has(name)) {
+        throw new Error(`Queue with ${name} name already exists!`);
       }
 
-      const channel = await this.connection.createChannel();
-      await channel.assertQueue(queue);
+      const { deadLetterExchange, primaryRoutingKey } =
+        await this.#bindDlqQueue({ channel, queue: name, routingKey });
+      await channel.assertQueue(name, {
+        durable: true,
+        deadLetterExchange: deadLetterExchange,
+        deadLetterRoutingKey: primaryRoutingKey,
+      });
 
-      this.channelsByQueueNameMap.set(queue, channel);
+      this.channelsByQueueNameMap.set(name, channel);
     });
 
     Promise.all(promises);
+  }
+
+  async #bindDlqQueue({ channel, queue, routingKey }) {
+    const dlqQueue = `dlq-${queue}`;
+
+    await channel.assertQueue(dlqQueue);
+    await channel.bindQueue(dlqQueue, AMQPClient.DLQ_EXCHANGE, routingKey);
+
+    return {
+      deadLetterExchange: AMQPClient.DLQ_EXCHANGE,
+      primaryRoutingKey: routingKey,
+    };
   }
 
   async consume(queue) {
@@ -50,6 +74,7 @@ export class AMQPClient extends EventEmitter {
           channel.ack(msg);
           this.emit("message", result);
         } else {
+          channel.reject(msg, false);
           this.emit("error", new Error("Consumer cancelled by server"));
         }
       });

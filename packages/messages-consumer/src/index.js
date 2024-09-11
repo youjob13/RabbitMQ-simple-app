@@ -21,7 +21,7 @@ export class MessagesConsumer {
       },
     });
 
-    this.#consume({ amqpClient, mailSender, queue: QUEUES.MAIL_MESSAGES });
+    this.#consume({ amqpClient, mailSender, queue: QUEUES.MAIL_MESSAGES.name });
   }
 
   #consume({ amqpClient, mailSender, queue }) {
@@ -37,7 +37,7 @@ export class MessagesConsumer {
 
     amqpClient.on("error", (error) => {
       console.error("Error:", error);
-      throw error;
+      // throw error;
     });
 
     amqpClient.consume(queue);
